@@ -26,6 +26,7 @@ class Login(tk.Frame):
                 line = re.sub('useruser', self.username, line)
                 line = re.sub('passpass', self.password, line)
                 cf.write(line)
+            cf.close()
             
     def login(self):
             self.username = self.userEntry.get()
