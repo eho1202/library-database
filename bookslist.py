@@ -33,7 +33,6 @@ class BooksList(tk.Frame):
                     for row in rows:
                         self.bookslist.append(row)
                 connection.commit()
-                connection.close()
         except cx_Oracle.Error as error:
             print(error)
             
@@ -70,16 +69,40 @@ class BooksList(tk.Frame):
                 # show the version of the Oracle Database
                 with connection.cursor() as cursor:
                     cursor.execute("insert into book values (:1, :2, :3, :4, :5, :6)", (self.isbn, self.title, self.last, self.first, self.cat, self.lang))
-                    cursor.close()
                     connection.commit()
-                    connection.close()
+                    self.insertWindow.destroy()
+                    self.bookslist.clear()
+                    self.getBooks()
+                    self.makeTable()
                     print('Succuess!')
             except cx_Oracle.Error as error:
-                print(error)
-            self.insertWindow.destroy
-            self.bookslist.clear()
-            self.getBooks()
-            self.makeTable()
+                messagebox.showerror("Error", error)
+            
+    def remRow(self):
+        self.isbnR = self.isbnREntry.get()
+        if ('ISBN' in self.isbnREntry.get()):
+            messagebox.showerror("Error", "Enter a valid ISBN!")
+        elif (not self.isbnREntry.get()):
+            messagebox.showerror("Error", "Enter the desired ISBN!")
+        else:
+            try:
+                connection = cx_Oracle.connect(
+                    config.username,
+                    config.password,
+                    config.dsn,
+                    encoding=config.encoding)
+
+                # show the version of the Oracle Database
+                with connection.cursor() as cursor:
+                    cursor.execute("delete from book where isbn = (:isbn)", {'isbn': (self.isbnR)})
+                    connection.commit()
+                    self.removeWindow.destroy()
+                    self.bookslist.clear()
+                    self.getBooks()
+                    self.makeTable()
+                    print('Succuess!')
+            except cx_Oracle.Error as error:
+                messagebox.showerror("Error", error)
     
     def addRow(self):
         self.insertWindow = Toplevel(self)
@@ -133,9 +156,20 @@ class BooksList(tk.Frame):
         submitBtn.pack(pady=10, padx=10)
     
     def removeRow(self):
-        removeWindow = Toplevel(self)
-        removeWindow.title("Remove Row")
-        removeWindow.geometry("400x300")
+        self.removeWindow = Toplevel(self)
+        self.removeWindow.title("Remove Row")
+        self.removeWindow.geometry("400x100")
+        
+        self.isbnR = StringVar()
+        
+        self.isbnREntry = tk.Entry(self.removeWindow, textvariable=self.isbnR)
+        self.isbnREntry.insert(0, "ISBN")
+        self.isbnREntry.pack(pady=10, padx=10)
+        isbn_focus_in = self.isbnREntry.bind('<Button-1>', lambda x: self.on_focus_in(self.isbnREntry))
+        isbn_focus_out = self.isbnREntry.bind('<FocusOut>', lambda x: self.on_focus_out(self.isbnREntry, "ISBN"))
+
+        submitBtn = tk.Button(self.removeWindow, text="Submit", command=lambda: self.remRow())
+        submitBtn.pack(pady=10, padx=10)
     
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -146,10 +180,10 @@ class BooksList(tk.Frame):
         self.makeTable()
         
         backBtn = tk.Button(self, text="Back", command=lambda: self.controller.show_frame("Content"))
-        backBtn.grid(row=2, column=0)
+        backBtn.grid(row=2, column=0, pady=10)
         
         insertBtn = tk.Button(self, text="Add Row", command=lambda: self.addRow())
-        insertBtn.grid(row=2, column=1)
+        insertBtn.grid(row=2, column=1, pady=10)
         
         removeBtn = tk.Button(self, text="Remove Row", command=lambda: self.removeRow())
-        removeBtn.grid(row=2, column=2)
+        removeBtn.grid(row=2, column=2, pady=10)

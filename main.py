@@ -2,10 +2,15 @@ import tkinter as tk
 import login
 import content
 import bookslist
+import client
+import staff
+import category
+import shelf
+import borrowedbooks
 
 class App(tk.Tk):
     
-    WIDTH = 1000
+    WIDTH = 1050
     HEIGHT = 700
     
     def __init__(self, *args, **kwargs):
@@ -20,7 +25,7 @@ class App(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
         
         self.frames = {}
-        for F in (login.Login, content.Content, bookslist.BooksList):
+        for F in (login.Login, content.Content, bookslist.BooksList, client.Customers, staff.Staffs, category.Categories, shelf.Shelves, borrowedbooks.Receipts):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame

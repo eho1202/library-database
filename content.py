@@ -1,5 +1,4 @@
 import tkinter as tk
-import login
 
 class Content(tk.Frame):
     def __init__(self, parent, controller):
@@ -12,8 +11,17 @@ class Content(tk.Frame):
         bookBtn = tk.Button(self, text="Show Books List", command=lambda: self.controller.show_frame("BooksList"))
         bookBtn.pack(pady=12, padx=10)
         
-        custBtn = tk.Button(self, text="Show Customer List")
+        receiptBtn = tk.Button(self, text="Show Receipt List", command=lambda: self.controller.show_frame("Receipts"))
+        receiptBtn.pack(pady=12, padx=10)
+        
+        custBtn = tk.Button(self, text="Show Customer List", command=lambda: self.controller.show_frame("Customers"))
         custBtn.pack(pady=12, padx=10)
         
-        staffBtn = tk.Button(self, text="Show Staff List")
+        staffBtn = tk.Button(self, text="Show Staff List", command=lambda: self.controller.show_frame("Staffs"))
         staffBtn.pack(pady=12, padx=10)
+        
+        categoryBtn = tk.Button(self, text="Show Category List", command=lambda: self.controller.show_frame("Categories"))
+        categoryBtn.pack(pady=12, padx=10)
+        
+        shelfBtn = tk.Button(self, text="Show Shelf List", command=lambda: self.controller.show_frame("Shelves"))
+        shelfBtn.pack(pady=12, padx=10)
